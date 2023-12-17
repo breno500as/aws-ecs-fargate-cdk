@@ -51,7 +51,7 @@ public class Alb01Stack extends Stack {
         		.taskImageOptions(ApplicationLoadBalancedTaskImageOptions
         				.builder()
         				.containerName("aws-client")
-        				.image(ContainerImage.fromRegistry("breno500as/aws-client:1.5.0"))
+        				.image(ContainerImage.fromRegistry("breno500as/aws-client:1.6.0"))
         				.containerPort(8080)
         				.logDriver(LogDriver
         						.awsLogs(AwsLogDriverProps.builder()
