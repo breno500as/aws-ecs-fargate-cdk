@@ -30,7 +30,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>com.myorg.AwsCdkApp</mainClass>
+                    <mainClass>com.myorg.AwsEcsFargateCdkApp</mainClass>
                 </configuration>
             </plugin>
         </plugins>
