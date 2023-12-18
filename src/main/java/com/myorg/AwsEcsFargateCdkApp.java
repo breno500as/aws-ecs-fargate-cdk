@@ -22,10 +22,15 @@ public class AwsEcsFargateCdkApp {
 		alb01Stack.addDependency(rdsStack);
 		alb01Stack.addDependency(snsStack);
 
+		final DynamoDbStack dynamodbStack = new DynamoDbStack(app, "DynamoDB");
+		
+		final SqsStack sqsStack = new SqsStack(app, "Sqs");
+
 		final Alb02Stack service02Stack = new Alb02Stack(app, "Alb02", clusterStack.getCluster(),
-				snsStack.getProductTopic());
+				snsStack.getProductTopic(), dynamodbStack.getProductsEventsTable(), sqsStack.getProductQueue());
 		service02Stack.addDependency(clusterStack);
-		service02Stack.addDependency(snsStack);
+		service02Stack.addDependency(sqsStack);
+		service02Stack.addDependency(dynamodbStack);
 
 		app.synth();
 	}

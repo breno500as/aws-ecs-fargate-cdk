@@ -34,7 +34,7 @@ public class Alb01Stack extends Stack {
         
         
       final Map<String, String> envVariables = new HashMap<>();
-      envVariables.put("SPRING_DATASOURCE_URL", "jdbc:mariadb://" + Fn.importValue("rds-endpoint") + ":3306/aws-client?createDatabaseIfNotExist=true");
+      envVariables.put("SPRING_DATASOURCE_URL", "jdbc:mariadb://" + Fn.importValue("rds-endpoint") + ":3306/aws-client-db?createDatabaseIfNotExist=true");
       envVariables.put("SPRING_DATASOURCE_USERNAME", "admin");
       envVariables.put("AWS_REGION", "us-east-1");
       envVariables.put("AWS_SNS_TOPIC_PRODUCT_ARN", productTopic.getTopic().getTopicArn());
@@ -51,7 +51,7 @@ public class Alb01Stack extends Stack {
         		.taskImageOptions(ApplicationLoadBalancedTaskImageOptions
         				.builder()
         				.containerName("aws-client")
-        				.image(ContainerImage.fromRegistry("breno500as/aws-client:1.6.0"))
+        				.image(ContainerImage.fromRegistry("breno500as/aws-client:1.7.0"))
         				.containerPort(8080)
         				.logDriver(LogDriver
         						.awsLogs(AwsLogDriverProps.builder()
