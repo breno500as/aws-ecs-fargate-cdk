@@ -20,16 +20,18 @@ import software.amazon.awscdk.services.ecs.patterns.ApplicationLoadBalancedTaskI
 import software.amazon.awscdk.services.elasticloadbalancingv2.HealthCheck;
 import software.amazon.awscdk.services.events.targets.SnsTopic;
 import software.amazon.awscdk.services.logs.LogGroup;
+import software.amazon.awscdk.services.s3.Bucket;
+import software.amazon.awscdk.services.sqs.Queue;
 import software.constructs.Construct;
  
 
 public class Alb01Stack extends Stack {
   
-	public Alb01Stack(final Construct scope, final String id, Cluster cluster, SnsTopic productTopic) {
-        this(scope, id, null, cluster, productTopic);
+	public Alb01Stack(final Construct scope, final String id, Cluster cluster, SnsTopic productTopic,  Bucket invoiceBucket, Queue invoiceQueue) {
+        this(scope, id, null, cluster, productTopic, invoiceBucket, invoiceQueue);
     }
 
-    public Alb01Stack(final Construct scope, final String id, final StackProps props, Cluster cluster, SnsTopic productTopic) {
+    public Alb01Stack(final Construct scope, final String id, final StackProps props, Cluster cluster, SnsTopic productTopic, Bucket invoiceBucket, Queue invoiceQueue) {
         super(scope, id, props);
         
         
@@ -40,6 +42,8 @@ public class Alb01Stack extends Stack {
       envVariables.put("AWS_SNS_TOPIC_PRODUCT_ARN", productTopic.getTopic().getTopicArn());
       envVariables.put("SPRING_PROFILES_ACTIVE", "prod");
       envVariables.put("SPRING_DATASOURCE_PASSWORD", Fn.importValue("rds-password"));
+      envVariables.put("AWS_S3_BUCKET_INVOICE_NAME", invoiceBucket.getBucketName());
+      envVariables.put("AWS_SQS_QUEUE_INVOICE_NAME", invoiceQueue.getQueueName());
         
       final  ApplicationLoadBalancedFargateService alb = ApplicationLoadBalancedFargateService.Builder.create(this, "alb-01")
         		.serviceName("service-01")
@@ -86,6 +90,10 @@ public class Alb01Stack extends Stack {
     		  .build());
       
       productTopic.getTopic().grantPublish(alb.getTaskDefinition().getTaskRole());
+      
+      invoiceQueue.grantConsumeMessages(alb.getTaskDefinition().getTaskRole());
+      
+      invoiceBucket.grantReadWrite(alb.getTaskDefinition().getTaskRole());
 
  
     }
