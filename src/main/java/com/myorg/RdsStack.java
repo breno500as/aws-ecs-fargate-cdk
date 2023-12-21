@@ -41,7 +41,7 @@ public class RdsStack extends Stack {
 		iSecurityGroup.addIngressRule(Peer.anyIpv4(), Port.tcp(3306));
 		
 		
-		 DatabaseInstance databaseInstance = DatabaseInstance.Builder
+		 final DatabaseInstance databaseInstance = DatabaseInstance.Builder
 	                .create(this, "Rds01")
 	                .instanceIdentifier("aws-client-db")
 	                .engine(DatabaseInstanceEngine.mysql(MySqlInstanceEngineProps.builder()
