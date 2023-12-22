@@ -11,7 +11,8 @@ public class AwsEcsFargateCdkApp {
 	
 	
 	public static void main(final String[] args) {
-		App app = new App();
+		
+		final App app = new App();
 
 		final VpcStack vpcStack = new VpcStack(app, "Vpc");
 
