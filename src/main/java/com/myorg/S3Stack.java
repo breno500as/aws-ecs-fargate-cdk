@@ -2,7 +2,6 @@ package com.myorg;
 
 import software.amazon.awscdk.RemovalPolicy;
 import software.amazon.awscdk.Stack;
-import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.services.events.targets.SnsTopic;
 import software.amazon.awscdk.services.s3.Bucket;
 import software.amazon.awscdk.services.s3.EventType;
@@ -20,13 +19,9 @@ public class S3Stack extends Stack {
 	private final Queue s3InvoiceQueue;
 
 	public S3Stack(final Construct scope, final String id) {
-		this(scope, id, null);
-	}
-
-	public S3Stack(final Construct scope, final String id, final StackProps props) {
-	        super(scope, id, props);
-
-	        SnsTopic s3InvoiceTopic = SnsTopic.Builder.create(Topic.Builder.create(this, "S3InvoiceTopic")
+		super(scope, id);
+		
+		 final SnsTopic s3InvoiceTopic = SnsTopic.Builder.create(Topic.Builder.create(this, "S3InvoiceTopic")
 	                .topicName("s3-invoice")
 	                .build())
 	                .build();
@@ -38,7 +33,7 @@ public class S3Stack extends Stack {
 
 	        bucket.addEventNotification(EventType.OBJECT_CREATED_PUT, new SnsDestination(s3InvoiceTopic.getTopic()));
 
-	        Queue s3InvoiceDlq = Queue.Builder.create(this, "S3InvoiceDlq")
+	        final Queue s3InvoiceDlq = Queue.Builder.create(this, "S3InvoiceDlq")
 	                .queueName("s3-invoice-dlq")
 	                .build();
 
@@ -52,9 +47,11 @@ public class S3Stack extends Stack {
 	                .deadLetterQueue(deadLetterQueue)
 	                .build();
 
-	        SqsSubscription sqsSubscription = SqsSubscription.Builder.create(s3InvoiceQueue).build();
+	        final SqsSubscription sqsSubscription = SqsSubscription.Builder.create(s3InvoiceQueue).build();
 	        s3InvoiceTopic.getTopic().addSubscription(sqsSubscription);
-	 }
+	}
+
+	 
 
 	public Bucket getBucket() {
 		return bucket;

@@ -6,7 +6,6 @@ import java.util.Map;
 import software.amazon.awscdk.Duration;
 import software.amazon.awscdk.RemovalPolicy;
 import software.amazon.awscdk.Stack;
-import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.services.applicationautoscaling.EnableScalingProps;
 import software.amazon.awscdk.services.dynamodb.Table;
 import software.amazon.awscdk.services.ecs.AwsLogDriverProps;
@@ -27,19 +26,14 @@ import software.constructs.Construct;
 public class Alb02Stack extends Stack {
 	
 	  public Alb02Stack(final Construct scope, final String id, Cluster cluster, SnsTopic productTopic, Table productEventsTable, Queue productQueue) {
-	        this(scope, id, null, cluster, productTopic, productEventsTable,productQueue);
-	    }
-
-	    public Alb02Stack(final Construct scope, final String id, final StackProps props, Cluster cluster, SnsTopic productTopic, Table productEventsTable, Queue productQueue) {
-	        super(scope, id, props);
- 
-
-	       
-	       final SqsSubscription sqsSubscription = SqsSubscription.Builder.create(productQueue).build();
+		  
+		  super(scope, id);
+		  
+		  final SqsSubscription sqsSubscription = SqsSubscription.Builder.create(productQueue).build();
 	       productTopic.getTopic().addSubscription(sqsSubscription);
 	       
 	       final Map<String, String> envVariables = new HashMap<>();
-	       envVariables.put("AWS_REGION", "us-east-1");
+	       envVariables.put("AWS_REGION", AwsEcsFargateCdkApp.AWS_REGION);
 	       envVariables.put("AWS_SQS_QUEUE_PRODUCT_NAME", productQueue.getQueueName());
 
 	   
@@ -88,9 +82,7 @@ public class Alb02Stack extends Stack {
 	        productQueue.grantConsumeMessages(alb02.getTaskDefinition().getTaskRole());
 	        
 	        productEventsTable.grantReadWriteData(alb02.getTaskDefinition().getTaskRole());
-
- 
-	      
 	    }
 
+	    
 }

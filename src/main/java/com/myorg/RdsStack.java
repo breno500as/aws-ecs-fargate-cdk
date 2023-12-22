@@ -6,7 +6,6 @@ import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.CfnParameter;
 import software.amazon.awscdk.SecretValue;
 import software.amazon.awscdk.Stack;
-import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.services.ec2.ISecurityGroup;
 import software.amazon.awscdk.services.ec2.InstanceClass;
 import software.amazon.awscdk.services.ec2.InstanceSize;
@@ -25,13 +24,18 @@ import software.amazon.awscdk.services.rds.MysqlEngineVersion;
 import software.constructs.Construct;
 
 public class RdsStack extends Stack {
+	
+	public static final String RDS_ENDPOINT = "rds-endpoint";
+	
+	public static final String RDS_PASSWORD = "rds-password";
+	
+	public static final String RDS_USER_NAME = "admin";
+	
+	
 	public RdsStack(final Construct scope, final String id, Vpc vpc) {
-		this(scope, id, null, vpc);
-	}
-
-	public RdsStack(final Construct scope, final String id, final StackProps props, Vpc vpc) {
-		super(scope, id, props);
-
+		super(scope, id);
+		
+		
 		final CfnParameter databasePassword = CfnParameter.Builder.create(this, "databasePassowrd").type("String")
 				.description("RDS password").build();
 		
@@ -62,16 +66,17 @@ public class RdsStack extends Stack {
 	                .build();
 
 		    // Expõe parâmetros de uma stack para serem acessíveis por outras stacks
-	        CfnOutput.Builder.create(this, "rds-endpoint")
-	                .exportName("rds-endpoint")
+	        CfnOutput.Builder.create(this, RDS_ENDPOINT)
+	                .exportName(RDS_ENDPOINT)
 	                .value(databaseInstance.getDbInstanceEndpointAddress())
 	                .build();
 
-	        CfnOutput.Builder.create(this, "rds-password")
-	                .exportName("rds-password")
+	        CfnOutput.Builder.create(this, RDS_PASSWORD)
+	                .exportName(RDS_PASSWORD)
 	                .value(databasePassword.getValueAsString())
 	                .build();
-
-
+		
 	}
+
+	 
 }
