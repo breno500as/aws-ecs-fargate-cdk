@@ -18,7 +18,7 @@ public class DynamoDbStack extends Stack {
 	public DynamoDbStack(final Construct scope, final String id) {
 		super(scope, id);
 		
-		productsEventsTable = Table.Builder.create(this, "ProductsEventsTable")
+		this.productsEventsTable = Table.Builder.create(this, "ProductsEventsTable")
 				.tableName("product-events")
 				.readCapacity(1)
 				.writeCapacity(1)
@@ -28,7 +28,7 @@ public class DynamoDbStack extends Stack {
 				.timeToLiveAttribute("ttl")
 				.removalPolicy(RemovalPolicy.DESTROY).build();
 
-		productsEventsTable.autoScaleReadCapacity(EnableScalingProps.builder()
+		this.productsEventsTable.autoScaleReadCapacity(EnableScalingProps.builder()
 				                                      .minCapacity(1)
 				                                      .maxCapacity(4).build())
 				            .scaleOnUtilization(UtilizationScalingProps.builder().targetUtilizationPercent(50)
@@ -37,13 +37,14 @@ public class DynamoDbStack extends Stack {
 						                                               .build());
 		
 		
-		productsEventsTable.autoScaleWriteCapacity(EnableScalingProps.builder()
+		this.productsEventsTable.autoScaleWriteCapacity(EnableScalingProps.builder()
 				                                                     .minCapacity(1)
 				                                                     .maxCapacity(4).build())
 		                   .scaleOnUtilization(UtilizationScalingProps.builder().targetUtilizationPercent(50)
 				                                                      .scaleInCooldown(Duration.seconds(30))
 				                                                      .scaleOutCooldown(Duration.seconds(30))
 				                                                      .build());
+		
 	}
 
 	
